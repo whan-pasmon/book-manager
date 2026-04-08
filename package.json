@@ -9,12 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ericblade/quagga2": "^1.12.1",
     "@mdi/font": "^7.4.47",
     "vue": "^3.5.32",
     "vue-router": "^4.6.4",
     "vuetify": "^4.0.5"
   },
   "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "vite": "^8.0.4"
   }

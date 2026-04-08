@@ -1,5 +1,5 @@
-import { connectDB } from './lib/db'
-import Book from './models/Book'
+import { connectDB } from './lib/db.js'
+import Book from './models/Book.js'
 
 export default async function handler(req, res) {
   await connectDB()

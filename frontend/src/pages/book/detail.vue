@@ -67,7 +67,8 @@ const bookId = ref(null)
 const book = reactive({
   name: '',
   detail: '',
-  isbn: ''
+  isbn: '',
+  image: ''
 })
 
 const saving = ref(false)
@@ -81,8 +82,12 @@ onMounted(async () => {
     bookId.value = route.params.id
     try {
       const res = await fetch(`${BASE_URL}/books?id=${bookId.value}`)
+      console.log('onMounted res :: ', res)
       if (res) {
+
+        console.log('onMounted res1 :: ', res)
         const data = await res.json()
+        console.log('onMounted data :: ', data)
         book.name = data.title || ''
         book.detail = data.detail || ''
         book.isbn = data.isbn || ''
@@ -136,6 +141,7 @@ async function saveBook() {
       book.name = ''
       book.detail = ''
       book.isbn = ''
+      book.image = ''
       removePhoto()
     }
   } catch (e) {

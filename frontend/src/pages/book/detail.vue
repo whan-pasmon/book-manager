@@ -145,6 +145,8 @@ async function saveBook() {
       book.image = ''
       removePhoto()
     }
+
+    router.push(`/`)
   } catch (e) {
     snackbarColor.value = 'error'
     snackbarText.value = 'Save failed!'

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1 class="mb-4">📚 Book Detail</h1>
+    <h1 class="mb-4">📚 {{ isEdit ? 'Edit Book' : 'Add Book' }}</h1>
     <v-row>
         <v-col cols="6">
             <v-text-field v-model="book.name" label="Book Name" hide-details variant="outlined" active density="compact"></v-text-field>
@@ -53,10 +53,16 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import Quagga from '@ericblade/quagga2'
 
+const route = useRoute()
+const router = useRouter()
 const BASE_URL = '/api'
+
+const isEdit = ref(false)
+const bookId = ref(null)
 
 const book = reactive({
   name: '',
@@ -69,10 +75,27 @@ const snackbar = ref(false)
 const snackbarText = ref('')
 const snackbarColor = ref('success')
 
+onMounted(async () => {
+  if (route.params.id) {
+    isEdit.value = true
+    bookId.value = route.params.id
+    const res = await fetch(`${BASE_URL}/books?id=${bookId.value}`)
+    if (res.ok) {
+      const data = await res.json()
+      book.name = data.title || ''
+      book.detail = data.detail || ''
+      book.isbn = data.isbn || ''
+      if (data.image) {
+        photoUrl.value = data.image
+      }
+    }
+  }
+})
+
 async function saveBook() {
   saving.value = true
   try {
-    let imageUrl = ''
+    let imageUrl = photoUrl.value || ''
 
     if (photoBase64.value) {
       const uploadRes = await fetch(`${BASE_URL}/upload`, {
@@ -85,24 +108,32 @@ async function saveBook() {
       imageUrl = uploadData.url
     }
 
-    const res = await fetch(`${BASE_URL}/books`, {
-      method: 'POST',
+    const payload = {
+      title: book.name,
+      detail: book.detail,
+      isbn: Number(book.isbn) || 0,
+      image: imageUrl
+    }
+
+    const url = isEdit.value ? `${BASE_URL}/books?id=${bookId.value}` : `${BASE_URL}/books`
+    const method = isEdit.value ? 'PUT' : 'POST'
+
+    const res = await fetch(url, {
+      method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: book.name,
-        detail: book.detail,
-        isbn: Number(book.isbn) || 0,
-        image: imageUrl
-      })
+      body: JSON.stringify(payload)
     })
     if (!res.ok) throw new Error('Save failed')
     snackbarColor.value = 'success'
-    snackbarText.value = 'Save successful!'
+    snackbarText.value = isEdit.value ? 'Updated!' : 'Save successful!'
     snackbar.value = true
-    book.name = ''
-    book.detail = ''
-    book.isbn = ''
-    removePhoto()
+
+    if (!isEdit.value) {
+      book.name = ''
+      book.detail = ''
+      book.isbn = ''
+      removePhoto()
+    }
   } catch (e) {
     snackbarColor.value = 'error'
     snackbarText.value = 'Save failed!'

@@ -29,10 +29,28 @@
         no-data-text="No data available"
     >
       <template #item.image="{ item }">
-        <img v-if="item.image" :src="item.image" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;" />
+        <img v-if="item.image" :src="item.image" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer;" @click="openImageDialog(item.image)" />
         <v-icon v-else icon="mdi-book-outline" size="40" color="grey" />
       </template>
+
+      <template #item.title="{ item }">
+          <div style="color: blue; font-weight: bold; cursor: pointer;" @click="$router.push(`/book/detail/${item._id}`)">
+             {{ item.title }}
+          </div>
+      </template>
     </v-data-table-virtual>
+
+    <v-dialog v-model="imageDialog" max-width="500">
+      <v-card>
+        <v-card-text class="text-center pa-4">
+          <img :src="imageDialogUrl" style="max-width: 100%; max-height: 70vh; object-fit: contain;" />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn @click="imageDialog = false">ปิด</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -42,6 +60,13 @@ import Quagga from '@ericblade/quagga2'
 
 const search = ref('')
 const barcodeInput = ref(null)
+const imageDialog = ref(false)
+const imageDialogUrl = ref('')
+
+function openImageDialog(url) {
+  imageDialogUrl.value = url
+  imageDialog.value = true
+}
 
 const API_URL = '/api/books'
 

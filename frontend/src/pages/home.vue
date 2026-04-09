@@ -19,21 +19,21 @@
       </v-col>
     </v-row>
 
-    <v-data-table-virtual
-        :headers="headers"
-        :items="filteredBooks"
-        :v-loading="loading"
-        height="100%"
-        item-value="_id"
-        fixed-header
-        no-data-text="No data available"
+    <v-data-table
+      :headers="headers"
+      :items="filteredBooks"
+      :loading="loading"
+      item-value="_id"
+      fixed-header
+      height="100%"
+      no-data-text="No data available"
     >
       <template #item.image="{ item }">
         <img
-          v-if="item.raw.image"
-          :src="item.raw.image"
+          v-if="item.image"
+          :src="item.image"
           style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer;"
-          @click="openImageDialog(item.raw.image)"
+          @click="openImageDialog(item.image)"
         />
         <v-icon v-else icon="mdi-book-outline" size="40" color="grey" />
       </template>
@@ -41,12 +41,12 @@
       <template #item.title="{ item }">
         <div
           style="cursor: pointer; color: #1976d2;"
-          @click="goDetail(item.raw)"
+          @click="goDetail(item)"
         >
-          {{ item.raw.title }}
+          {{ item.title }}
         </div>
       </template>
-    </v-data-table-virtual>
+    </v-data-table>
 
     <v-dialog v-model="imageDialog" max-width="500">
       <v-card>

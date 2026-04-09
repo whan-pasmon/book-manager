@@ -4,7 +4,7 @@ import BookDetail from './pages/book/detail.vue'
 
 const routes = [
   { path: '/', component: Home },
-  { path: '/book/detail', component: BookDetail },
+  { path: '/book/detail/:id?', component: BookDetail }
 ]
 
 export default createRouter({

@@ -79,15 +79,19 @@ onMounted(async () => {
   if (route.params.id) {
     isEdit.value = true
     bookId.value = route.params.id
-    const res = await fetch(`${BASE_URL}/books?id=${bookId.value}`)
-    if (res.ok) {
-      const data = await res.json()
-      book.name = data.title || ''
-      book.detail = data.detail || ''
-      book.isbn = data.isbn || ''
-      if (data.image) {
-        photoUrl.value = data.image
+    try {
+      const res = await fetch(`${BASE_URL}/books?id=${bookId.value}`)
+      if (res.ok) {
+        const data = await res.json()
+        book.name = data.title || ''
+        book.detail = data.detail || ''
+        book.isbn = data.isbn || ''
+        if (data.image) {
+          photoUrl.value = data.image
+        }
       }
+    } catch (e) {
+      console.error('Failed to load book:', e)
     }
   }
 })

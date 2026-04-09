@@ -81,7 +81,7 @@ onMounted(async () => {
     bookId.value = route.params.id
     try {
       const res = await fetch(`${BASE_URL}/books?id=${bookId.value}`)
-      if (res.ok) {
+      if (res) {
         const data = await res.json()
         book.name = data.title || ''
         book.detail = data.detail || ''

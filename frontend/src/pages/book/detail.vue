@@ -77,6 +77,7 @@ const snackbarText = ref('')
 const snackbarColor = ref('success')
 
 onMounted(async () => {
+  console.log('route.params.id :: ', route.params.id)
   if (route.params.id) {
     isEdit.value = true
     bookId.value = route.params.id

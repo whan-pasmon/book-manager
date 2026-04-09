@@ -22,21 +22,29 @@
     <v-data-table-virtual
         :headers="headers"
         :items="filteredBooks"
-        :search="search"
+        :v-loading="loading"
         height="100%"
-        item-value="name"
+        item-value="_id"
         fixed-header
         no-data-text="No data available"
     >
       <template #item.image="{ item }">
-        <img v-if="item.image" :src="item.image" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer;" @click="openImageDialog(item.image)" />
+        <img
+          v-if="item.raw.image"
+          :src="item.raw.image"
+          style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer;"
+          @click="openImageDialog(item.raw.image)"
+        />
         <v-icon v-else icon="mdi-book-outline" size="40" color="grey" />
       </template>
 
       <template #item.title="{ item }">
-          <div style="color: blue; font-weight: bold; cursor: pointer;" @click="$router.push(`/book/detail/${item._id}`)">
-             {{ item.title }}
-          </div>
+        <div
+          style="cursor: pointer; color: #1976d2;"
+          @click="goDetail(item.raw)"
+        >
+          {{ item.raw.title }}
+        </div>
       </template>
     </v-data-table-virtual>
 
@@ -57,11 +65,18 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import Quagga from '@ericblade/quagga2'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const search = ref('')
 const barcodeInput = ref(null)
 const imageDialog = ref(false)
 const imageDialogUrl = ref('')
+const loading = ref(false)
+
+function goDetail(book) {
+  router.push(`/book/detail/${book._id}`)
+}
 
 function openImageDialog(url) {
   imageDialogUrl.value = url
@@ -102,15 +117,19 @@ const headers = [
 const books = ref([])
 
 onMounted(async () => {
-  const res = await fetch(API_URL)
-  books.value = await res.json()
+  loading.value = true
+  try {
+    const res = await fetch(API_URL)
+    books.value = await res.json()
+  } finally {
+    loading.value = false
+  }
 })
 
 const filteredBooks = computed(() => {
-  console.log('books :: ', books.value)
   return books.value.filter(book =>
-    book.title.toLowerCase().includes(search.value.toLowerCase()) ||
-    String(book.isbn).includes(search.value)
+    (book.title || '').toLowerCase().includes(search.value.toLowerCase()) ||
+    String(book.isbn || '').includes(search.value)
   )
 })
 </script>

@@ -56,7 +56,7 @@
 import { reactive, ref } from 'vue'
 import Quagga from '@ericblade/quagga2'
 
-const BASE_URL = 'https://book-manager-chi-two.vercel.app/api'
+const BASE_URL = '/api'
 
 const book = reactive({
   name: '',

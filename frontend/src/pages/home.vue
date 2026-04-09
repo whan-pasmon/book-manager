@@ -27,7 +27,12 @@
         item-value="name"
         fixed-header
         no-data-text="No data available"
-    ></v-data-table-virtual>
+    >
+      <template #item.image="{ item }">
+        <img v-if="item.image" :src="item.image" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;" />
+        <v-icon v-else icon="mdi-book-outline" size="40" color="grey" />
+      </template>
+    </v-data-table-virtual>
   </v-container>
 </template>
 
@@ -38,7 +43,7 @@ import Quagga from '@ericblade/quagga2'
 const search = ref('')
 const barcodeInput = ref(null)
 
-const API_URL = 'https://book-manager-chi-two.vercel.app/api/books'
+const API_URL = '/api/books'
 
 function onBarcodeCaptured(event) {
   const file = event.target.files[0]
@@ -65,9 +70,9 @@ function onBarcodeCaptured(event) {
   })
 }
 const headers = [
+    { title: '', align: 'start', key: 'image', sortable: false, width: '60px' },
     { title: 'Book Name', align: 'start', key: 'title' },
     { title: 'ISBN', align: 'start', key: 'isbn' },
-    { title: '', align: 'end', key: 'year' },
   ]
 const books = ref([])
 
